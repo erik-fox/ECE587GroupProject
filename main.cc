@@ -1,4 +1,4 @@
-///////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 //  Copyright 2015 Samsung Austin Semiconductor, LLC.                //
 ///////////////////////////////////////////////////////////////////////
 
@@ -304,7 +304,7 @@ int main(int argc, char* argv[]){
             bool predDir = false;
 
             predDir = brpred->GetPrediction(PC);
-            brpred->UpdatePredictor(PC, opType, branchTaken, predDir, branchTarget); 
+            brpred->UpdatePredictor(PC, branchTaken, predDir, branchTarget); 
 
             if(predDir != branchTaken){
               numMispred++; // update mispred stats
@@ -330,7 +330,7 @@ int main(int argc, char* argv[]){
           }
           else if (br_class.conditionality == bt9::BrClass::Conditionality::UNCONDITIONAL) { // for predictors that want to track unconditional branches
             uncond_branch_instruction_counter++;
-            brpred->TrackOtherInst(PC, opType, branchTaken, branchTarget);
+            brpred->TrackOtherInst(PC, opType, branchTarget);
           }
           else {
             fprintf(stderr, "CONDITIONALITY ERROR\n");
@@ -375,6 +375,3 @@ int main(int argc, char* argv[]){
 //ver2      printf("  MISPRED_PER_1K_INST_BTB_DYN \t : %10.4f",   1000.0*(double)(numMispred_btbDYN)/(double)(total_instruction_counter));
       printf("\n");
 }
-
-
-
