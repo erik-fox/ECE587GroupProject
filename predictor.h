@@ -791,14 +791,14 @@ public:
     }
 
     // Setup global components
-    logg[STEP[0]] = LOGG + 1;
-    logg[STEP[1]] = LOGG + 3;
-    logg[STEP[2]] = LOGG + 2;
-    logg[STEP[3]] = LOGG - 1;
-    TB[STEP[0]] =  7;
-    TB[STEP[1]] =  9;
-    TB[STEP[2]] = 11;
-    TB[STEP[3]] = 13;
+    logg[STEP[0]] = LOGG + 1; //11 ->2K
+    logg[STEP[1]] = LOGG + 3;//13 -> 8K
+    logg[STEP[2]] = LOGG + 2;//12 -> 4K
+    logg[STEP[3]] = LOGG - 1;//9 -> 512
+    TB[STEP[0]] =  7;//7 Bits
+    TB[STEP[1]] =  9;//9 Bits
+    TB[STEP[2]] = 11;//11 Bits
+    TB[STEP[3]] = 13;//13 Bits
     for(int i=0; i<NSTEP; i++) {
       gtable[STEP[i]] = new GEntry[1 << logg[STEP[i]]];
       budget += (2/*U*/+3/*C*/+TB[STEP[i]]) * (1<<logg[STEP[i]]);
