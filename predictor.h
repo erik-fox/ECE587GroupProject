@@ -614,7 +614,7 @@ class my_predictor {
   int TB[NHIST];// 20 Tag widths -> Assigned on line 794
   int logg[NHIST]; //20 Indexes, give the value to raise two to. ie 2^12 = 4k --> see line 794
   
-  // History length for TAGE predictor
+  // History length for TAGE predictor -> line 703
   int m[NHIST];//Global history length; 20 lengths; 0,4,8,11,15,19 ...
   int l[NHIST];//Local history length; 20 lengths; 0,0,0,0,0,0,0,0,0,0,0,2,2...
   int p[NHIST];
@@ -632,8 +632,8 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Index variables of TAGE and some other predictors
-  uint32_t CI[TSTAT];
-  uint32_t GI[NHIST];
+  uint32_t CI[TSTAT]; 
+  uint32_t GI[NHIST]; 
   uint32_t GTAG[NHIST];
   
   // Intermediate prediction result for TAGE
@@ -666,9 +666,9 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Prediction Tables
-  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table
-  GEntry *gtable[NHIST]; // global components
-  SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table
+  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base?
+  GEntry *gtable[NHIST]; // global components -> 20 Tages?
+  SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table -> Statistical corrector, loop predictor and others come from other projects
   LoopPredictor ltable; // loop predictor
   
   // Branch Histories
