@@ -617,9 +617,9 @@ class my_predictor {
   // History length for TAGE predictor -> line 703
   int m[NHIST];//Global history length; 20 lengths; 0,4,8,11,15,19 ...
   int l[NHIST];//Local history length; 20 lengths; 0,0,0,0,0,0,0,0,0,0,0,2,2...
-  int p[NHIST];
+  int p[NHIST];//Path history?
   
-  // History length for statistical corrector predictors
+  // History length for statistical corrector predictors -> from past BP championships
   int cg[NSTAT];
   int cp[NSTAT];
   int cl[MSTAT];
@@ -644,7 +644,7 @@ class my_predictor {
   bool SCPred;
   int SCSum;
   
-  // Intermediate prediction result for loop predictor
+  // Intermediate prediction result for loop predictor -> from past projects
   bool loopPred;
   bool loopValid;
 
@@ -666,7 +666,7 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Prediction Tables
-  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base?
+  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base 16K LOGB = 14 ->16k
   GEntry *gtable[NHIST]; // global components -> 20 Tages?
   SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table -> Statistical corrector, loop predictor and others come from other projects
   LoopPredictor ltable; // loop predictor
