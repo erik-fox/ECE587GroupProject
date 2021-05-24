@@ -190,9 +190,9 @@ public:
 };
 
 
-class GlobalHistory : public GlobalHistoryBuffer {
+class GlobalHistory : public GlobalHistoryBuffer { 
   
-#ifdef FOLDEDINDEXING
+#ifdef FOLDEDINDEXING 
 private:
   // Folded index (this register save the hash value of the global history,
   // this values can be regenerated if the all branch histories are stored in the GHR)
@@ -672,9 +672,9 @@ class my_predictor {
   LoopPredictor ltable; // loop predictor
   
   // Branch Histories
-  GlobalHistory ghist; // global history register
-  LocalHistory lhist; // local history table
-  uint32_t phist; // path history register
+  GlobalHistory ghist; // global history register -> Line 193
+  LocalHistory lhist; // local history table -> line 150
+  uint32_t phist; // path history register // Not a part of paper
 
   // Profiling Counters -> counter code line 88 ***NEED MORE INFO ON COUNTERS****
   SCounter<DC_WIDTH> DC; // difficulty counter
