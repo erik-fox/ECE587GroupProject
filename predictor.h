@@ -71,7 +71,7 @@
 #define LHTBITS 6
 #define LHTSIZE (1<<LHTBITS)
 #define LHTMASK (LHTSIZE-1)
-#define LHISTWIDTH ((MAXCLHIST>(MAXHIST/LG_RATIO))?MAXCLHIST:(MAXHIST/LG_RATIO))
+#define LHISTWIDTH ((MAXCLHIST>(MAXHIST/LG_RATIO))?MAXCLHIST:(MAXHIST/LG_RATIO))// 12>880/60 (no) ->LHISTWIDTH=14
 
 // Misc counter width
 #define DC_WIDTH 10
@@ -298,7 +298,7 @@ public:
 
 
 class LocalHistory {
-  uint32_t lht[LHTSIZE];
+  uint32_t lht[LHTSIZE];// size 64 entries -> 14 bits wide
   
   uint32_t getIndex(uint32_t pc) {
     pc = pc ^ (pc >> LHTBITS) ^ (pc >> (2*LHTBITS));
@@ -667,14 +667,15 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Prediction Tables
-  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base 16K LOGB = 14 ->16k; Line 534
-  GEntry *gtable[NHIST]; // global components -> 20 Tages ; Line 570;
+  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal predictor table -> Base 16K LOGB = 14 ->16k;Class defininition Line 534; Init 816
+  GEntry *gtable[NHIST]; // global components -> 20  tagged predictor pointers;Class definition Line 570; go to line 804
+  
   SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table -> Statistical corrector, loop predictor and others come from other projects
   LoopPredictor ltable; // loop predictor
   
   // Branch Histories
-  GlobalHistory ghist; // global history register -> Line 193
-  LocalHistory lhist; // local history table -> line 300
+  GlobalHistory ghist; // global history register -> Class definition Line 193; Init 832; Setup 834; gidx 865; gtag 873; update 1126  -> 880 bits
+  LocalHistory lhist; // local history table -> Class definition line 300; Init 833; update 1133 -> 64 entries 14 bits wide
   uint32_t phist; // path history register // Not a part of paper
 
   // Profiling Counters -> counter code line 88 ***NEED MORE INFO ON COUNTERS****
@@ -801,7 +802,7 @@ public:
     TB[STEP[2]] = 11;//11 Bits
     TB[STEP[3]] = 13;//13 Bits
     for(int i=0; i<NSTEP; i++) {
-      gtable[STEP[i]] = new GEntry[1 << logg[STEP[i]]];
+      gtable[STEP[i]] = new GEntry[1 << logg[STEP[i]]];// Create the Tagged predictors
       budget += (2/*U*/+3/*C*/+TB[STEP[i]]) * (1<<logg[STEP[i]]);
     }
     for(int i=0; i<NSTEP; i++) {
@@ -813,7 +814,7 @@ public:
     }
     
     // Setup bimodal table
-    budget += btable.init();//budget tracks the size of the design to ensure below 32K
+    budget += btable.init();//budget tracks the size of the design to ensure below 32K;
     
     // Setup statistic corrector predictor
     ctable[0] = new SCounter<CSTAT>[1 << LOGC];
@@ -829,9 +830,9 @@ public:
     
     // Setup history register & table
     phist = 0;
-    ghist.init();
-    lhist.init();
-    ghist.setup(m, logg, TB, cg, LOGC-CBANK);
+    ghist.init();//line 175 -> sets up last 880 lines of branch history to false
+    lhist.init();//-> line 309 -> Sets up all 64 entries in LHT to 0
+    ghist.setup(m, logg, TB, cg, LOGC-CBANK);//Folded History, not explained in paper but "When the number of global history bits exceeds the number of index bits, the global history is “folded”"
     budget += PHISTWIDTH;
     budget += m[NHIST-1];
     budget += LHISTWIDTH * LHTSIZE;
@@ -860,6 +861,7 @@ public:
   // gindex computes a full hash of pc, ghist and phist
   uint32_t gindex(uint32_t pc, int bank, int hist) {
     // we combine local branch history for the TAGE index computation
+  
     uint32_t index =
       lhist.read(pc, l[bank], logg[bank]) ^
       ghist.gidx(bank, m[bank], logg[bank]) ^
