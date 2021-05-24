@@ -190,7 +190,8 @@ public:
 };
 
 
-class GlobalHistory : public GlobalHistoryBuffer { 
+class GlobalHistory : 
+public GlobalHistoryBuffer { 
   
 #ifdef FOLDEDINDEXING 
 private:
