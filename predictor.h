@@ -666,8 +666,8 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Prediction Tables
-  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base 16K LOGB = 14 ->16k
-  GEntry *gtable[NHIST]; // global components -> 20 Tages?
+  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table -> Base 16K LOGB = 14 ->16k; Line 534
+  GEntry *gtable[NHIST]; // global components -> 20 Tages ; Line 570;
   SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table -> Statistical corrector, loop predictor and others come from other projects
   LoopPredictor ltable; // loop predictor
   
@@ -676,7 +676,7 @@ class my_predictor {
   LocalHistory lhist; // local history table
   uint32_t phist; // path history register
 
-  // Profiling Counters
+  // Profiling Counters -> counter code line 88 ***NEED MORE INFO ON COUNTERS****
   SCounter<DC_WIDTH> DC; // difficulty counter
   SCounter<WL_WIDTH> WITHLOOP; // loop predictor usefulness
   UCounter<UC_WIDTH> UC; // statistical corrector predictor tracking counter
@@ -812,7 +812,7 @@ public:
     }
     
     // Setup bimodal table
-    budget += btable.init();
+    budget += btable.init();//budget tracks the size of the design to ensure below 32K
     
     // Setup statistic corrector predictor
     ctable[0] = new SCounter<CSTAT>[1 << LOGC];
