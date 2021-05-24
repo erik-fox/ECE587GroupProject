@@ -916,6 +916,7 @@ public:
 #endif
 
       // Compute index values
+      //Each tagged component (T0-T19) has its own hash function to compute index and partial tag
       for (int i = 0; i < NHIST; i++) {
         GI[i] = gindex(pc, i, phist);
         GTAG[i] = gtag(pc, i);
