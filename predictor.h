@@ -595,7 +595,11 @@ public:
 //////////////////////////////////////////////////////////
 
 // Configuration of table sharing strategy
-static const int STEP[NSTEP+1] = {0, NDIFF, NHIST/2, NHIST-NDIFF, NHIST};
+static const int STEP[NSTEP+1] = {0, NDIFF, NHIST/2, NHIST-NDIFF, NHIST};//NDIFF=2 NHIST=20
+//T0-T2 Share 2K (2^11); Tag Width 7 Bit
+//T3-T9 Share 8K (2^13); Tag width 9 Bits
+//T10-T16 Share 4K (2^12); Tag Width 11 Bits
+//T17-19 Share 512 (2^9); Tag Width 13 bits
   
 class my_predictor {
 
@@ -607,8 +611,8 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Tag width and index width of TAGE predictor
-  int TB[NHIST];
-  int logg[NHIST];
+  int TB[NHIST];// 20 Tag widths -> Assigned on line 794
+  int logg[NHIST]; //20 Indexes, give the value to raise two to. ie 2^12 = 4k --> see line 794
   
   // History length for TAGE predictor
   int m[NHIST];
