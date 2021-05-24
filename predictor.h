@@ -615,8 +615,8 @@ class my_predictor {
   int logg[NHIST]; //20 Indexes, give the value to raise two to. ie 2^12 = 4k --> see line 794
   
   // History length for TAGE predictor
-  int m[NHIST];
-  int l[NHIST];
+  int m[NHIST];//Global history length; 20 lengths; 0,4,8,11,15,19 ...
+  int l[NHIST];//Local history length; 20 lengths; 0,0,0,0,0,0,0,0,0,0,0,2,2...
   int p[NHIST];
   
   // History length for statistical corrector predictors
