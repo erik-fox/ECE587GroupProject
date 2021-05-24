@@ -674,7 +674,7 @@ class my_predictor {
   
   // Branch Histories
   GlobalHistory ghist; // global history register -> Line 193
-  LocalHistory lhist; // local history table -> line 150
+  LocalHistory lhist; // local history table -> line 300
   uint32_t phist; // path history register // Not a part of paper
 
   // Profiling Counters -> counter code line 88 ***NEED MORE INFO ON COUNTERS****
