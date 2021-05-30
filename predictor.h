@@ -71,7 +71,7 @@
 #define LHTBITS 6
 #define LHTSIZE (1<<LHTBITS)
 #define LHTMASK (LHTSIZE-1)
-#define LHISTWIDTH ((MAXCLHIST>(MAXHIST/LG_RATIO))?MAXCLHIST:(MAXHIST/LG_RATIO))// 12>880/60 (no) ->LHISTWIDTH=14
+#define LHISTWIDTH ((MAXCLHIST>(MAXHIST/LG_RATIO))?MAXCLHIST:(MAXHIST/LG_RATIO))
 
 // Misc counter width
 #define DC_WIDTH 10
@@ -190,10 +190,9 @@ public:
 };
 
 
-class GlobalHistory : 
-public GlobalHistoryBuffer { 
+class GlobalHistory : public GlobalHistoryBuffer {
   
-#ifdef FOLDEDINDEXING 
+#ifdef FOLDEDINDEXING
 private:
   // Folded index (this register save the hash value of the global history,
   // this values can be regenerated if the all branch histories are stored in the GHR)
@@ -298,7 +297,7 @@ public:
 
 
 class LocalHistory {
-  uint32_t lht[LHTSIZE];// size 64 entries -> 14 bits wide
+  uint32_t lht[LHTSIZE];
   
   uint32_t getIndex(uint32_t pc) {
     pc = pc ^ (pc >> LHTBITS) ^ (pc >> (2*LHTBITS));
@@ -596,14 +595,13 @@ public:
 //////////////////////////////////////////////////////////
 
 // Configuration of table sharing strategy
-static const int STEP[NSTEP+1] = {0, NDIFF, NHIST/2, NHIST-NDIFF, NHIST};//NDIFF=2 NHIST=20
-//T0-T2 Share 2K (2^11); Tag Width 7 Bit
-//T3-T9 Share 8K (2^13); Tag width 9 Bits
-//T10-T16 Share 4K (2^12); Tag Width 11 Bits
-//T17-19 Share 512 (2^9); Tag Width 13 bits
+static const int STEP[NSTEP+1] = {0, NDIFF, NHIST/2, NHIST-NDIFF, NHIST};
   
 class my_predictor {
 
+
+
+    uint32_t randomset[32];
   /////////////////////////////////////////////////////////
   // Constant Values
   //
@@ -612,15 +610,15 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Tag width and index width of TAGE predictor
-  int TB[NHIST];// 20 Tag widths -> Assigned on line 794
-  int logg[NHIST]; //20 Indexes, give the value to raise two to. ie 2^12 = 4k --> see line 794
+  int TB[NHIST];
+  int logg[NHIST];
   
-  // History length for TAGE predictor -> line 703
-  int m[NHIST];//Global history length; 20 lengths; 0,4,8,11,15,19 ...
-  int l[NHIST];//Local history length; 20 lengths; 0,0,0,0,0,0,0,0,0,0,0,2,2...
-  int p[NHIST];//Path history?
+  // History length for TAGE predictor
+  int m[NHIST];
+  int l[NHIST];
+  int p[NHIST];
   
-  // History length for statistical corrector predictors -> from past BP championships
+  // History length for statistical corrector predictors
   int cg[NSTAT];
   int cp[NSTAT];
   int cl[MSTAT];
@@ -633,8 +631,8 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Index variables of TAGE and some other predictors
-  uint32_t CI[TSTAT]; 
-  uint32_t GI[NHIST]; 
+  uint32_t CI[TSTAT];
+  uint32_t GI[NHIST];
   uint32_t GTAG[NHIST];
   
   // Intermediate prediction result for TAGE
@@ -645,7 +643,7 @@ class my_predictor {
   bool SCPred;
   int SCSum;
   
-  // Intermediate prediction result for loop predictor -> from past projects
+  // Intermediate prediction result for loop predictor
   bool loopPred;
   bool loopValid;
 
@@ -667,18 +665,17 @@ class my_predictor {
   /////////////////////////////////////////////////////////
   
   // Prediction Tables
-  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal predictor table -> Base 16K LOGB = 14 ->16k;Class defininition Line 534; Init 816
-  GEntry *gtable[NHIST]; // global components -> 20  tagged predictor pointers;Class definition Line 570; go to line 804
-  
-  SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table -> Statistical corrector, loop predictor and others come from other projects
+  Bimodal<LOGB,HYSTSHIFT> btable; // bimodal table
+  GEntry *gtable[NHIST]; // global components
+  SCounter<CSTAT> *ctable[2]; // statistical corrector predictor table
   LoopPredictor ltable; // loop predictor
   
   // Branch Histories
-  GlobalHistory ghist; // global history register -> Class definition Line 193; Init 832; Setup 834; gidx 865; gtag 873; update 1126  -> 880 bits
-  LocalHistory lhist; // local history table -> Class definition line 300; Init 833; update 1133 -> 64 entries 14 bits wide
-  uint32_t phist; // path history register // Not a part of paper
+  GlobalHistory ghist; // global history register
+  LocalHistory lhist; // local history table
+  uint32_t phist; // path history register
 
-  // Profiling Counters -> counter code line 88 ***NEED MORE INFO ON COUNTERS****
+  // Profiling Counters
   SCounter<DC_WIDTH> DC; // difficulty counter
   SCounter<WL_WIDTH> WITHLOOP; // loop predictor usefulness
   UCounter<UC_WIDTH> UC; // statistical corrector predictor tracking counter
@@ -769,7 +766,6 @@ public:
   
   my_predictor (void) {
     int budget=0;
-    
     // Setup history length
     setupHistoryConfiguration();
     
@@ -793,16 +789,16 @@ public:
     }
 
     // Setup global components
-    logg[STEP[0]] = LOGG + 1; //11 ->2K
-    logg[STEP[1]] = LOGG + 3;//13 -> 8K
-    logg[STEP[2]] = LOGG + 2;//12 -> 4K
-    logg[STEP[3]] = LOGG - 1;//9 -> 512
-    TB[STEP[0]] =  7;//7 Bits
-    TB[STEP[1]] =  9;//9 Bits
-    TB[STEP[2]] = 11;//11 Bits
-    TB[STEP[3]] = 13;//13 Bits
+    logg[STEP[0]] = LOGG + 1;
+    logg[STEP[1]] = LOGG + 3;
+    logg[STEP[2]] = LOGG + 2;
+    logg[STEP[3]] = LOGG - 1;
+    TB[STEP[0]] =  7;
+    TB[STEP[1]] =  9;
+    TB[STEP[2]] = 11;
+    TB[STEP[3]] = 13;
     for(int i=0; i<NSTEP; i++) {
-      gtable[STEP[i]] = new GEntry[1 << logg[STEP[i]]];// Create the Tagged predictors
+      gtable[STEP[i]] = new GEntry[1 << logg[STEP[i]]];
       budget += (2/*U*/+3/*C*/+TB[STEP[i]]) * (1<<logg[STEP[i]]);
     }
     for(int i=0; i<NSTEP; i++) {
@@ -814,7 +810,7 @@ public:
     }
     
     // Setup bimodal table
-    budget += btable.init();//budget tracks the size of the design to ensure below 32K;
+    budget += btable.init();
     
     // Setup statistic corrector predictor
     ctable[0] = new SCounter<CSTAT>[1 << LOGC];
@@ -830,15 +826,18 @@ public:
     
     // Setup history register & table
     phist = 0;
-    ghist.init();//line 175 -> sets up last 880 lines of branch history to false
-    lhist.init();//-> line 309 -> Sets up all 64 entries in LHT to 0
-    ghist.setup(m, logg, TB, cg, LOGC-CBANK);//folding is a form of hashing
+    ghist.init();
+    lhist.init();
+    ghist.setup(m, logg, TB, cg, LOGC-CBANK);
     budget += PHISTWIDTH;
     budget += m[NHIST-1];
     budget += LHISTWIDTH * LHTSIZE;
     
     // Output the total hardware budget
     printf("Total Budget: Limit:%d, %d %d\n", (32*1024*8+1024), budget, budget/8);
+  
+    for(int i =0; i<32; i++)
+	    randomset[i]=rand();
   }
   
   
@@ -859,15 +858,22 @@ public:
   }
   
   // gindex computes a full hash of pc, ghist and phist
-  uint32_t gindex(uint32_t pc, int bank, int hist) {
+  uint32_t gindex(uint32_t pc, int bank, int hist, uint32_t randomset[32]) {
     // we combine local branch history for the TAGE index computation
-  //folding hash
-    uint32_t index =
-      lhist.read(pc, l[bank], logg[bank]) ^
-      ghist.gidx(bank, m[bank], logg[bank]) ^
-      F(hist, p[bank], bank, logg[bank]) ^
-      (pc >> (abs (logg[bank] - bank) + 1)) ^ pc ;
-    return index & ((1 << logg[bank]) - 1);//post processing stage to get the correct number of bits;
+    	uint32_t index;
+	uint32_t mask;
+	uint32_t key= lhist.read(pc, l[bank], logg[bank]) +
+      	ghist.gidx(bank, m[bank], logg[bank]) +
+      	F(hist, p[bank], bank, logg[bank]) +
+      	(pc >> (abs (logg[bank] - bank) + 1)) + pc;
+  	for(int i=0; i<32;++i){
+		mask=1<<(32-i);
+		if(mask & key)
+			index^=randomset[i];
+	}
+  
+  
+    return index & ((1 << logg[bank]) - 1);
   }
   
   //  tag computation for TAGE predictor
@@ -916,9 +922,8 @@ public:
 #endif
 
       // Compute index values
-      //Each tagged component (T0-T19) has its own hash function to compute index and partial tag
       for (int i = 0; i < NHIST; i++) {
-        GI[i] = gindex(pc, i, phist);
+        GI[i] = gindex(pc, i, phist, randomset);
         GTAG[i] = gtag(pc, i);
       }
       
@@ -1161,5 +1166,6 @@ class PREDICTOR{
 /////////////////////////////////////////////////////////////
 
 #endif
+
 
 
