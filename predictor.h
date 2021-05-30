@@ -832,7 +832,7 @@ public:
     phist = 0;
     ghist.init();//line 175 -> sets up last 880 lines of branch history to false
     lhist.init();//-> line 309 -> Sets up all 64 entries in LHT to 0
-    ghist.setup(m, logg, TB, cg, LOGC-CBANK);//Folded History, not explained in paper but "When the number of global history bits exceeds the number of index bits, the global history is “folded”"
+    ghist.setup(m, logg, TB, cg, LOGC-CBANK);//folding is a form of hashing
     budget += PHISTWIDTH;
     budget += m[NHIST-1];
     budget += LHISTWIDTH * LHTSIZE;
@@ -861,13 +861,13 @@ public:
   // gindex computes a full hash of pc, ghist and phist
   uint32_t gindex(uint32_t pc, int bank, int hist) {
     // we combine local branch history for the TAGE index computation
-  
+  //folding hash
     uint32_t index =
       lhist.read(pc, l[bank], logg[bank]) ^
       ghist.gidx(bank, m[bank], logg[bank]) ^
       F(hist, p[bank], bank, logg[bank]) ^
       (pc >> (abs (logg[bank] - bank) + 1)) ^ pc ;
-    return index & ((1 << logg[bank]) - 1);
+    return index & ((1 << logg[bank]) - 1);//post processing stage to get the correct number of bits;
   }
   
   //  tag computation for TAGE predictor
