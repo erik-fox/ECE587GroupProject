@@ -36,7 +36,7 @@
 
 // Local global branch history ratio
 #define LSTEP 2
-#define LG_RATIO 60
+#define LG_RATIO 1
 
 // History length settings
 #define MINHIST 5
