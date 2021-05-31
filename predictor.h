@@ -873,7 +873,7 @@ public:
   	for(int i=0; i<32;++i){
 		mask=1<<(32-i);
 		if(mask & key)
-			index^=randomset[i];
+			index^=randomset[32-i];
 	}
   
   
