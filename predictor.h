@@ -871,7 +871,7 @@ public:
       	F(hist, p[bank], bank, logg[bank]) +
       	(pc >> (abs (logg[bank] - bank) + 1)) + pc;
   	for(int i=0; i<32;++i){
-		mask=1<<(32-i);
+		mask=1<<(31-i);
 		if(mask & key)
 			index^=randomset[31-i];
 	}
