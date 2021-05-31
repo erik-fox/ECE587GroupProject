@@ -866,10 +866,10 @@ public:
     // we combine local branch history for the TAGE index computation
     	uint32_t index;
 	uint32_t mask;
-	uint32_t key= lhist.read(pc, l[bank], logg[bank]) +
-      	ghist.gidx(bank, m[bank], logg[bank]) +
-      	F(hist, p[bank], bank, logg[bank]) +
-      	(pc >> (abs (logg[bank] - bank) + 1)) + pc;
+	uint32_t key= lhist.read(pc, l[bank], logg[bank]) ^
+      	ghist.gidx(bank, m[bank], logg[bank]) ^
+      	F(hist, p[bank], bank, logg[bank]) ^
+      	(pc >> (abs (logg[bank] - bank) + 1)) ^ pc;
   	for(int i=0; i<32;++i){
 		mask=1<<(31-i);
 		if(mask & key)
